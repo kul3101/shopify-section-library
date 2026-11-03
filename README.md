@@ -4,7 +4,7 @@
 
 A collection of custom Online Store 2.0 sections built on top of Shopify's [Dawn](https://github.com/Shopify/dawn) theme (v16.0.0). Every section is fully editable in the theme editor, follows Dawn's conventions, and ships with no external JavaScript libraries.
 
-**Live demo:** _coming soon_ (storefront password: _coming soon_)
+**Live demo:** [devstore-2ze0itgy.myshopify.com](https://devstore-2ze0itgy.myshopify.com/) (storefront password: `awraob`)
 
 ## Sections
 
