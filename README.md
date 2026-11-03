@@ -11,6 +11,7 @@ A collection of custom Online Store 2.0 sections built on top of Shopify's [Dawn
 | Section | What it does | Status |
 |---|---|---|
 | [Store perks](#store-perks) | A row of icon, heading and text blocks for shipping, returns, guarantees and similar selling points | Done |
+| [Before and after slider](#before-and-after-slider) | Two images in one frame with a draggable divider, for renovations, product upgrades or retouching | Done |
 
 More sections are on the way. See the [roadmap](#roadmap).
 
@@ -41,7 +42,7 @@ A grid of short "why buy from us" messages, such as free shipping, easy returns 
 
 - Responsive grid: 1 column on mobile, 2 on tablet, and the configured count on desktop.
 - Empty blocks are hidden on the storefront but stay visible in the theme editor so merchants can still select and fill them.
-- The whole section is hidden when no block has content, so an empty section never leaves a gap on the page.
+- The perk list is not rendered when no block has content. The heading still shows if one is set.
 - Respects the theme's "reveal on scroll" animation setting.
 - Semantic markup: a `ul` list with `h2` and `h3` headings. Icons are marked `aria-hidden`.
 - Padding scales down by 25 percent on mobile, the same way Dawn's own sections do.
@@ -50,13 +51,45 @@ A grid of short "why buy from us" messages, such as free shipping, easy returns 
 
 **Files:** `sections/store-perks.liquid`, `assets/component-store-perks.css`
 
+### Before and after slider
+
+Compare two images in one frame. Drag the divider, tap anywhere on the image, or use the keyboard to reveal more of either side.
+
+**Section settings**
+
+| Setting | Type | Default |
+|---|---|---|
+| Heading | Inline rich text | "See the difference" |
+| Before image, after image | Image picker | Empty |
+| Before label, after label | Text, blank hides the label | "Before", "After" |
+| Starting divider position | Range, 10 to 90 percent | 50 |
+| Image ratio | Adapt to image, square (1:1), portrait (4:5), landscape (3:2), wide (16:9) | Adapt to image |
+| Color scheme | Color scheme | Scheme 1 |
+| Top and bottom padding | Range, 0 to 100 px | 36 px each |
+
+**Details**
+
+- Works with mouse, touch, pen and keyboard. A vertical swipe over the slider still scrolls the page, and pinch to zoom still works.
+- Keyboard and screen reader support comes from a native range input: one Tab stop, arrow, Home, End and Page keys, and the position read out as "55 percent".
+- The 44 px grip stays grabbable at both edges and shows the theme's focus ring when reached by keyboard.
+- Without JavaScript, the page still shows a static split at the starting position.
+- The frame reserves its size up front, so nothing shifts while images load. Tall images are capped at 85 percent of the screen height.
+- Responsive `srcset` never offers a size larger than the original image. The first section on a page loads its images eagerly.
+- On the storefront the section is hidden until both images are set. In the theme editor it shows placeholders so it can be set up.
+- Each section holds one comparison. Several sliders on one page work independently.
+- Stays left to right on right-to-left storefronts.
+- About 1 KB of JavaScript after compression, with no libraries.
+
+**Files:** `sections/before-after-slider.liquid`, `assets/before-after-slider.js`, `assets/component-before-after-slider.css`
+
 ## Using a section in your own theme
 
 These sections are written for Dawn and Dawn-based themes.
 
-1. Copy the section file from `sections/` and its stylesheet from `assets/` into your theme.
+1. Copy the section's files, listed under each section above, from `sections/` and `assets/` into your theme. That includes any JavaScript file.
 2. Merge the matching `sections.<section-name>` keys from `locales/en.default.schema.json` into your theme's schema locale file.
-3. Push the theme, open the theme editor, click **Add section** and pick the section.
+3. If the section has buyer-facing text, also merge its `sections.<section-name>` keys from `locales/en.default.json`. The before and after slider needs this for its screen reader text.
+4. Push the theme, open the theme editor, click **Add section** and pick the section.
 
 ## Running locally
 
@@ -78,7 +111,6 @@ shopify theme check --fail-level error
 
 ## Roadmap
 
-- Before and after image slider
 - Countdown and announcement timer
 - Product bundle ("frequently bought together")
 - Size guide drawer
