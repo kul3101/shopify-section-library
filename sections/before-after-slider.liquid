@@ -1,0 +1,253 @@
+{%- liquid
+  assign before_image = section.settings.before_image
+  assign after_image = section.settings.after_image
+
+  assign show_comparison = false
+  if request.design_mode
+    assign show_comparison = true
+  elsif before_image != blank and after_image != blank
+    assign show_comparison = true
+  endif
+
+  case section.settings.aspect_ratio
+    when 'square'
+      assign ratio = 1
+    when 'portrait'
+      assign ratio = 0.8
+    when 'landscape'
+      assign ratio = 1.5
+    when 'wide'
+      assign ratio = 1.7778
+    else
+      if before_image != blank
+        assign ratio = before_image.aspect_ratio
+      elsif after_image != blank
+        assign ratio = after_image.aspect_ratio
+      else
+        assign ratio = 1.5
+      endif
+  endcase
+  assign ratio = ratio | round: 4
+
+  assign before_alt = before_image.alt | default: section.settings.before_label | default: ''
+  assign after_alt = after_image.alt | default: section.settings.after_label | default: ''
+
+  assign before_url_width = before_image.width | at_most: 3840
+  assign after_url_width = after_image.width | at_most: 3840
+
+  assign loading = 'lazy'
+  assign fetch_priority = 'auto'
+  if section.index == 1
+    assign loading = 'eager'
+    assign fetch_priority = 'high'
+  endif
+
+  assign widths = '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+  assign page_width_inner = settings.page_width | minus: 100
+  assign sizes = '(min-width: ' | append: settings.page_width | append: 'px) ' | append: page_width_inner
+  assign sizes = sizes | append: 'px, (min-width: 750px) calc(100vw - 10rem), calc(100vw - 3rem)'
+-%}
+
+{%- if show_comparison -%}
+  {{ 'component-before-after-slider.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'before-after-slider.js' | asset_url }}" defer="defer"></script>
+
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    }
+
+    @media screen and (min-width: 750px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+      }
+    }
+  {%- endstyle -%}
+
+  <div class="before-after-slider color-{{ section.settings.color_scheme }} gradient">
+    <div class="before-after-slider__inner page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="before-after-slider__heading inline-richtext h2">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      <before-after-slider id="BeforeAfterSlider-{{ section.id }}" class="before-after-slider__frame" dir="ltr" style="--before-after-ratio: {{ ratio }}; --before-after-position: {{ section.settings.initial_position }}%;">
+        <div class="before-after-slider__layer before-after-slider__layer--before">
+          {%- if before_image != blank -%}
+            {{
+              before_image
+              | image_url: width: before_url_width
+              | image_tag:
+                widths: widths,
+                sizes: sizes,
+                alt: before_alt,
+                class: 'before-after-slider__media',
+                loading: loading,
+                fetchpriority: fetch_priority
+            }}
+          {%- else -%}
+            {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg before-after-slider__media' }}
+          {%- endif -%}
+          {%- if section.settings.before_label != blank -%}
+            <span class="before-after-slider__label before-after-slider__label--before" dir="auto">
+              {{- section.settings.before_label | escape -}}
+            </span>
+          {%- endif -%}
+        </div>
+        <div class="before-after-slider__layer before-after-slider__layer--after">
+          {%- if after_image != blank -%}
+            {{
+              after_image
+              | image_url: width: after_url_width
+              | image_tag:
+                widths: widths,
+                sizes: sizes,
+                alt: after_alt,
+                class: 'before-after-slider__media',
+                loading: loading,
+                fetchpriority: fetch_priority
+            }}
+          {%- else -%}
+            {{ 'hero-apparel-2' | placeholder_svg_tag: 'placeholder-svg before-after-slider__media' }}
+          {%- endif -%}
+          {%- if section.settings.after_label != blank -%}
+            <span class="before-after-slider__label before-after-slider__label--after" dir="auto">
+              {{- section.settings.after_label | escape -}}
+            </span>
+          {%- endif -%}
+        </div>
+        <input
+          type="range"
+          class="before-after-slider__input"
+          min="0"
+          max="100"
+          step="1"
+          value="{{ section.settings.initial_position }}"
+          aria-label="{{ 'sections.before-after-slider.slider_label' | t }}"
+          aria-valuetext="{{ 'sections.before-after-slider.slider_value' | t: value: section.settings.initial_position }}"
+          data-value-text="{{ 'sections.before-after-slider.slider_value' | t: value: '[value]' }}"
+          autocomplete="off"
+        >
+        <div class="before-after-slider__divider" aria-hidden="true">
+          <span class="before-after-slider__grip"></span>
+        </div>
+      </before-after-slider>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.before-after-slider.name",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "t:sections.before-after-slider.settings.heading.default",
+      "label": "t:sections.before-after-slider.settings.heading.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image",
+      "label": "t:sections.before-after-slider.settings.before_image.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image",
+      "label": "t:sections.before-after-slider.settings.after_image.label"
+    },
+    {
+      "type": "text",
+      "id": "before_label",
+      "default": "t:sections.before-after-slider.settings.before_label.default",
+      "label": "t:sections.before-after-slider.settings.before_label.label",
+      "info": "t:sections.before-after-slider.settings.before_label.info"
+    },
+    {
+      "type": "text",
+      "id": "after_label",
+      "default": "t:sections.before-after-slider.settings.after_label.default",
+      "label": "t:sections.before-after-slider.settings.after_label.label",
+      "info": "t:sections.before-after-slider.settings.after_label.info"
+    },
+    {
+      "type": "range",
+      "id": "initial_position",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 50,
+      "label": "t:sections.before-after-slider.settings.initial_position.label"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.before-after-slider.settings.aspect_ratio.options__1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.before-after-slider.settings.aspect_ratio.options__2.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.before-after-slider.settings.aspect_ratio.options__3.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.before-after-slider.settings.aspect_ratio.options__4.label"
+        },
+        {
+          "value": "wide",
+          "label": "t:sections.before-after-slider.settings.aspect_ratio.options__5.label"
+        }
+      ],
+      "default": "adapt",
+      "label": "t:sections.before-after-slider.settings.aspect_ratio.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.before-after-slider.presets.name"
+    }
+  ]
+}
+{% endschema %}

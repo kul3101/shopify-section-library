@@ -3429,6 +3429,55 @@
       "presets": {
         "name": "Store perks"
       }
+    },
+    "before-after-slider": {
+      "name": "Before and after slider",
+      "settings": {
+        "heading": {
+          "label": "Heading",
+          "default": "See the difference"
+        },
+        "before_image": {
+          "label": "Before image"
+        },
+        "after_image": {
+          "label": "After image"
+        },
+        "before_label": {
+          "label": "Before label",
+          "info": "Leave blank to hide",
+          "default": "Before"
+        },
+        "after_label": {
+          "label": "After label",
+          "info": "Leave blank to hide",
+          "default": "After"
+        },
+        "initial_position": {
+          "label": "Starting divider position"
+        },
+        "aspect_ratio": {
+          "label": "Image ratio",
+          "options__1": {
+            "label": "Adapt to image"
+          },
+          "options__2": {
+            "label": "Square (1:1)"
+          },
+          "options__3": {
+            "label": "Portrait (4:5)"
+          },
+          "options__4": {
+            "label": "Landscape (3:2)"
+          },
+          "options__5": {
+            "label": "Wide (16:9)"
+          }
+        }
+      },
+      "presets": {
+        "name": "Before and after slider"
+      }
     }
   }
 }
