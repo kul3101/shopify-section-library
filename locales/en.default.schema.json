@@ -3396,6 +3396,39 @@
           "label": "Open by default"
         }
       }
+    },
+    "store-perks": {
+      "name": "Store perks",
+      "settings": {
+        "heading": {
+          "label": "Heading",
+          "default": "Why shop with us"
+        },
+        "header_layout": {
+          "content": "Layout"
+        },
+        "columns_desktop": {
+          "label": "Columns on desktop"
+        }
+      },
+      "blocks": {
+        "perk": {
+          "name": "Perk",
+          "settings": {
+            "heading": {
+              "label": "Heading",
+              "default": "Perk heading"
+            },
+            "text": {
+              "label": "Text",
+              "default": "<p>Share a reason customers love shopping with you.</p>"
+            }
+          }
+        }
+      },
+      "presets": {
+        "name": "Store perks"
+      }
     }
   }
 }

@@ -1,0 +1,47 @@
+.store-perks {
+  --store-perks-icon-size: calc(var(--font-heading-scale) * 3.2rem);
+}
+
+.store-perks__heading {
+  margin: 0 0 3rem;
+  text-align: center;
+}
+
+.store-perks__list {
+  margin-bottom: 0;
+}
+
+.store-perks__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.store-perks__item--empty {
+  min-height: 6rem;
+}
+
+.store-perks__icon {
+  display: inline-flex;
+  margin-bottom: 1.2rem;
+}
+
+.store-perks__icon .svg-wrapper {
+  width: var(--store-perks-icon-size);
+  height: var(--store-perks-icon-size);
+  fill: currentColor;
+}
+
+.store-perks__item-heading {
+  margin: 0 0 0.8rem;
+}
+
+.store-perks__item-heading:last-child {
+  margin-bottom: 0;
+}
+
+.store-perks__text {
+  width: 100%;
+}
